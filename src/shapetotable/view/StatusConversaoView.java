@@ -6,6 +6,8 @@
 package shapetotable.view;
 
 import java.awt.Toolkit;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -16,25 +18,31 @@ public class StatusConversaoView extends javax.swing.JFrame {
     /**
      * Creates new form StatusConversao
      */
+    public int cancelar = 0;
+    String nomeDB;
+
     public StatusConversaoView() {
         initComponents();
         setIcon();
     }
-    
-    public void setStatus(int incremento, int total, String nomeDB){
-        
+
+    public int setStatus(int incremento, int total, String nomeDB) {
+
         int percentual;
-        percentual = (incremento*100)/total;
-        
+        this.nomeDB = nomeDB;
+        percentual = (incremento * 100) / total;
+
         jLblNomeDB.setText(nomeDB);
         jLblStatus.setText(incremento + " / " + total);
         //System.out.println("Contador de porcentagem: " + percentual);
-        
+
         jPBar.setValue(percentual);
-    }
-    
-    public void setStatusFinal(String texto){
         
+        return cancelar; // se cancelar = 1 cancela o popup de conversão e o processo todo no FOR
+    }
+
+    public void setStatusFinal(String texto) {
+
         jLblStatus.setText(texto);
         //System.out.println("Contador de porcentagem: " + percentual);
     }
@@ -58,6 +66,12 @@ public class StatusConversaoView extends javax.swing.JFrame {
         setTitle("Status de Conversão");
         setResizable(false);
         setSize(new java.awt.Dimension(400, 200));
+        setType(java.awt.Window.Type.POPUP);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPBar.setForeground(new java.awt.Color(0, 204, 0));
         jPBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -107,6 +121,15 @@ public class StatusConversaoView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        if (JOptionPane.showConfirmDialog(null, "<html><b>Deseja intorromper a conversão do Shape?"
+                + "\nAo cancelar, o número de registros que serão gravados na tabela"
+                + "\nserá o número de convertidos até o momento desta confirmação!"
+                + "\n\n<html><FONT COLOR=\"#AA0000\">-> Sua tabela ficará incompleta na base " + nomeDB, "ATENÇÃO", JOptionPane.YES_NO_OPTION, 0, new ImageIcon("./Src/Icones/interrogacao.png")) == 0) {
+            cancelar = 1;
+        }
+    }//GEN-LAST:event_formWindowClosing
+
     /**
      * @param args the command line arguments
      */
@@ -142,7 +165,7 @@ public class StatusConversaoView extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void setIcon() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("Sol.png")));
     }

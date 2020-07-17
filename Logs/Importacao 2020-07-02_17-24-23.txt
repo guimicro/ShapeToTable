@@ -1,0 +1,11 @@
+[INICIO DO PROCESSO] 02/07/2020 17:23:41
+
+INICIANDO IMPORTAÇÃO DE MAPA - QUANTIDADE DE SHAPES PARA CONVERTER: 1
+
+---------------------------------------------------------------------------------------
+1º ITEM SELECIONADO -> POR FAVOR AGUARDE, TENTANDO CONECTAR AO BANCO DE DADOS ORACLE...
+
+---------------------------------------------------------------------------------------
+IMPORTAÇÕES FINALIZADAS!
+
+[FIM DO PROCESSO] 02/07/2020 17:24:23

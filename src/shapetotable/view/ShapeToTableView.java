@@ -299,7 +299,7 @@ public class ShapeToTableView extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "SHAPE", "BANCO ORACLE", "ATIVADO"
+                "ID", "SHAPE (Origem)", "BANCO ORACLE (Destino)", "ATIVADO"
             }
         ) {
             Class[] types = new Class [] {
@@ -470,7 +470,7 @@ public class ShapeToTableView extends javax.swing.JFrame {
                         .addComponent(jTxColunaId, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jTxNomeTabela, javax.swing.GroupLayout.Alignment.LEADING))
                     .addComponent(jCBoxFunction, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -485,7 +485,7 @@ public class ShapeToTableView extends javax.swing.JFrame {
                 .addComponent(jTxColunaId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addComponent(jTxSrid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jCBoxFunction, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -553,7 +553,7 @@ public class ShapeToTableView extends javax.swing.JFrame {
                 .addComponent(jCBoxAppend1)
                 .addGap(18, 18, 18)
                 .addComponent(jCBoxAppend2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         jBtnLogs.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icones/registros-24.png"))); // NOI18N
@@ -669,7 +669,7 @@ public class ShapeToTableView extends javax.swing.JFrame {
                         .addComponent(jBtnLogs, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jBtnImportar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanelText, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 177, Short.MAX_VALUE)
+                        .addComponent(jPanelText, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
                         .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))
                 .addContainerGap())
@@ -680,7 +680,7 @@ public class ShapeToTableView extends javax.swing.JFrame {
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanelText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
@@ -764,6 +764,8 @@ public class ShapeToTableView extends javax.swing.JFrame {
     private void jCBxBancoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jCBxBancoFocusGained
         // TODO add your handling code here:
         ListarComboBoxBanco();
+        //ListarComboBoxShape();
+        ListarJTable();
     }//GEN-LAST:event_jCBxBancoFocusGained
 
     private void jBtnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAdicionarActionPerformed
@@ -843,7 +845,7 @@ public class ShapeToTableView extends javax.swing.JFrame {
             jBtnImportar.setEnabled(false);
             acionarImportar();
         }
-        
+
     }//GEN-LAST:event_jBtnImportarActionPerformed
 
     private void jCBoxFunctionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBoxFunctionActionPerformed
@@ -1153,8 +1155,7 @@ public class ShapeToTableView extends javax.swing.JFrame {
                 }
             }
         }.start();
-        
-        
+
     }
 
     //--------------------------------------------------------------------------
@@ -1171,6 +1172,45 @@ public class ShapeToTableView extends javax.swing.JFrame {
         recompilaFazenda = recompilaFaz;
     }
 
+    public int verificaQtdeRegistrosTabelaAtual() {
+        String select;
+        int totalReg = 0;
+
+        try { // VERIFICA A QUANTIDADE DE REGISTROS DENTRO DA ATUAL TABELA DE MAPA ANTES DA IMPORTAÇÃO
+            select = "SELECT COUNT(*) AS CONT FROM " + m_tableName;
+            PreparedStatement stmtSelect = conn.prepareStatement(select);
+            ResultSet rs = stmtSelect.executeQuery();
+            rs.next();
+            totalReg = rs.getInt("CONT");
+//            jTALog.append("\r\n\n-> A ATUAL TABELA " + m_tableName + " CONTÉM " + totalReg + " REGISTROS");
+//            jTALog.setCaretPosition(jTALog.getText().length());
+            stmtSelect.close();
+
+        } catch (SQLException se) {
+            System.out.println(se);
+            totalReg = -1;
+        }
+        return totalReg;
+    }
+
+    public int getMaxIdTabelaMapa() {
+        int maxID;
+        try {
+            PreparedStatement stmt = conn.prepareStatement("SELECT MAX(" + m_idName + ") AS ID FROM " + m_tableName);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            maxID = (rs.getInt("ID"));
+//                    System.out.println("Maior ID: " + m_start_id);
+            stmt.close();
+        } catch (SQLException exF) {
+            System.out.println(exF);
+            jTALog.append("\r\n\n-> TABELA ATUAL '" + m_tableName + "' NÃO EXISTE OU NÃO POSSUI COLUNA 'ID'\n REFAÇA A IMPORTAÇÃO SEM AS FUNÇÕES DE 'APPEND'");
+            jTALog.setCaretPosition(jTALog.getText().length());
+            maxID = -1;
+        }
+        return maxID;
+    }
+
     protected void prepareTableForData(Connection conn, DBFReaderJGeom dbfr, ShapefileFeatureJGeom sf, //static foi removido
             ShapefileReaderJGeom sfh)
             throws IOException, SQLException {
@@ -1181,8 +1221,13 @@ public class ShapeToTableView extends javax.swing.JFrame {
         // Drop table   
         System.out.println("Dropping old table...");
 //        logs.add("\r\n\n-> TABELA " + m_tableName + " ANTERIOR FOI APAGADA!");
-        jTALog.append("\r\n\n-> TABELA " + m_tableName + " ANTERIOR FOI APAGADA!");
-        jTALog.setCaretPosition(jTALog.getText().length());
+
+        int qtdeReg = verificaQtdeRegistrosTabelaAtual();
+        if (qtdeReg >= 0) {
+            jTALog.append("\r\n\n-> A ATUAL TABELA '" + m_tableName + "' CONTÉM " + verificaQtdeRegistrosTabelaAtual() + " REGISTROS");
+            jTALog.setCaretPosition(jTALog.getText().length());
+        }
+
         Statement stmt = null;
         String update;
 
@@ -1191,8 +1236,18 @@ public class ShapeToTableView extends javax.swing.JFrame {
             update = "DROP TABLE " + m_tableName;
             stmt.executeUpdate(update);
             stmt.close();
+            jTALog.append("\r\n\n-> TABELA '" + m_tableName + "' ANTERIOR FOI APAGADA!");
+            jTALog.setCaretPosition(jTALog.getText().length());
         } catch (SQLException de) {
             System.out.println(de);
+            if (de.getMessage().toUpperCase().contains("NÃO EXISTE")) {
+                jTALog.append("\r\n\n-> TABELA '" + m_tableName + "' NÃO EXISTE AINDA!");
+                jTALog.setCaretPosition(jTALog.getText().length());
+            } else {
+                jTALog.append("\r\n\n-> TABELA '" + m_tableName + "' NÃO FOI APAGADA: " + de.getMessage());
+                jTALog.setCaretPosition(jTALog.getText().length());
+            }
+
         }
 
         // Delete reference to it from metadata table   
@@ -1214,7 +1269,7 @@ public class ShapeToTableView extends javax.swing.JFrame {
             // Create feature table   
             System.out.println("Creating new table...");
 //            logs.add("\r\n\n-> CRIANDO NOVA TABELA " + m_tableName + "...");
-            jTALog.append("\r\n\n-> CRIANDO NOVA TABELA " + m_tableName + "...");
+            jTALog.append("\r\n\n-> CRIANDO NOVA TABELA '" + m_tableName + "'...");
             jTALog.setCaretPosition(jTALog.getText().length());
             //System.out.println("RelSchema: " + sf.getRelSchema(dbfr, m_idName));   
             stmt = conn.createStatement();
@@ -1351,279 +1406,309 @@ public class ShapeToTableView extends javax.swing.JFrame {
                     + "MDSYS.SDO_DIM_ELEMENT('M', " + minMeasure + ", " + maxMeasure + ", " + mg_tolerance + "))";
         }
 
-        // Call create table   
+        // Call create table  - CRIA A TABELA DE MAPA SE O PARAMETRO = 0
         if (skip_create_table == 0) {
 
             prepareTableForData(conn, dbfr, sf, sfh);
             m_start_id = 1;
-        } else {
+        } else { // SE NÃO, A TABELA ATUAL É UTILIZADA
+
 //            System.out.println("Appending to existing table -> APPEND = 1\n");
-            jTALog.append("\r\n\n-> ATUALIZANDO DADOS DA TABELA");
+            jTALog.append("\r\n\n-> A ATUAL TABELA '" + m_tableName + "' CONTÉM " + verificaQtdeRegistrosTabelaAtual() + " REGISTROS");
+            jTALog.setCaretPosition(jTALog.getText().length());
+            verificaQtdeRegistrosTabelaAtual();
+            m_start_id = getMaxIdTabelaMapa() + 1;
+//            jTALog.append("\r\n\n-> ATUALIZANDO DADOS DA TABELA");
+//            jTALog.setCaretPosition(jTALog.getText().length());
+
+//            if (skip_create_table == 1) { // SE O VALOR FOR 2, SERÁ PEGO O MAIOR VALOR DE ID DA ATUAL TABELA E OS NOVOS REGISTROS SERÃO INSERIDOS A PARTIR DO 'MAX(ID) + 1'
+//                m_start_id = getMaxIdTabelaMapa() + 1;
+//            }
+//
+//            if (skip_create_table == 2) { // SE O VALOR FOR 2, SERÁ PEGO O MAIOR VALOR DE ID DA ATUAL TABELA E OS NOVOS REGISTROS SERÃO INSERIDOS A PARTIR DO 'MAX(ID) + 1'
+//                m_start_id = getMaxIdTabelaMapa() + 1;
+//            }
+        }
+        if (m_start_id > 0) { // Verifica se o início de ID é maior que 0 se não, nem consegue importar mapa
+            ////////////////////////////////////////////////////////////////////////////
+            // Conversion from Feature to DB
+            ////////////////////////////////////////////////////////////////////////////
+
+            if (skip_create_table != 0) {
+                jTALog.append("\r\n\n-> ATUALIZANDO DADOS DA TABELA '" + m_tableName + "'...");
+                jTALog.setCaretPosition(jTALog.getText().length());
+            }
+
+            error_cnt = 0;
+            int numFields = dbfr.numFields();
+            numRecords = dbfr.numRecords();
+//        logs.add("\r\n\n-> QUANTIDADE DE REGISTROS À CONVERTER DO ARQUIVO SHAPE: " + String.valueOf(numRecords));
+            jTALog.append("\r\n\n-> QUANTIDADE DE REGISTROS À CONVERTER DO ARQUIVO SHAPE: " + String.valueOf(numRecords));
+            jTALog.setCaretPosition(jTALog.getText().length());
+            byte[] fieldTypes = new byte[numFields];
+            for (int field = 0; field < numFields; field++) {
+                fieldTypes[field] = dbfr.getFieldType(field);
+                System.out.println("Campos: " + dbfr.getFieldName(field));
+//            logs.add("\r\n [COLUNA" + (field + 1) + ": " + dbfr.getFieldName(field) + "]");
+                jTALog.append("\r\n [COLUNA" + (field + 1) + ": " + dbfr.getFieldName(field) + "]");
+                jTALog.setCaretPosition(jTALog.getText().length());
+            } //usar isso para mostrar as colunas do shape para o usuário
+
+            jTALog.append("\r\n\n CONVERTENDO REGISTROS, AGUARDE...");
             jTALog.setCaretPosition(jTALog.getText().length());
 
-            if (skip_create_table == 2) {
-                try {
-//                    System.out.println("APPEND = 2");
-                    PreparedStatement stmt = conn.prepareStatement("SELECT MAX(" + m_idName + ") AS ID FROM " + m_tableName);
-                    ResultSet rs = stmt.executeQuery();
-                    rs.next();
+            Hashtable ht = null;
+            // Get first feature record to determine num of columns
+            ht = sf.fromRecordToFeature(dbfr, sfh, fieldTypes, numFields, 0, m_srid);
+            // Num of columns
+            int val = ht.size();
+            String params = null;
+            String paramsM = null;
+            if (m_idName == null) {
+                params = "(";
+            } else {
+                params = "(?,";
+            }
+            for (int i = 0; i < val; i++) {
+                if (i == 0) {
+                    params = params + " ?";
+                } else {
+                    params = params + ", ?";
+                }
+            }
+            params = params + ")";
+            paramsM = params.substring(0, (params.length() - 2)) + "MDSYS.SDO_MIGRATE.TO_CURRENT(?, " + dimArrayMig + "))";
 
-                    m_start_id = (rs.getInt("ID") + 1);
-//                    System.out.println("Maior ID: " + m_start_id);
+            String[] colNames = sf.getOraFieldNames(dbfr, fieldTypes, numFields);
+            // Create prepared statements
+            String insertRec = "INSERT INTO " + m_tableName + " VALUES" + params;
+            PreparedStatement ps = conn.prepareStatement(insertRec);
+            PreparedStatement psCom = conn.prepareStatement("COMMIT");
+            String insertMig = "INSERT INTO " + m_tableName + " VALUES" + paramsM;
+            PreparedStatement psMig = conn.prepareStatement(insertMig);
+            //ResultSet resMig = null;
+            STRUCT str = null;
+
+            StatusConversaoView popUpStatusConversao = new StatusConversaoView();
+            popUpStatusConversao.setLocationRelativeTo(null);
+            popUpStatusConversao.setVisible(true);
+
+            for (int i = 0; i < numRecords; i++) {
+
+                //Edit to adjust, or comment to remove screen output; default 10
+                if ((i + 1) % 1 == 0) {
+                    //System.out.println("Converting record #" + (i + 1));
+                    int cancel;
+                    cancel = popUpStatusConversao.setStatus(i + 1, numRecords, nomeDB);
+                    if (cancel == 1) {
+                        numRecords = i;
+                        jTALog.append("\r\n\n*** OPERAÇÃO DE IMPORTAÇÃO CANCELADA PELO USUÁRIO! ***");
+                        jTALog.setCaretPosition(jTALog.getText().length());
+                        break;
+                    }
+                }
+
+                if (i == (numRecords - 1)) {
+                    popUpStatusConversao.setStatusFinal("Indexando Registros.");
+                }
+                //////////////////////////////////////////////////////////////////////////////
+
+                ht = sf.fromRecordToFeature(dbfr, sfh, fieldTypes, numFields, i, m_srid);
+
+                if (m_idName == null) {
+                    try {
+                        // Migrate geometry if polygon, polygonz, or polygonm
+                        if (shpFileType == 5 || shpFileType == 15 || shpFileType == 25) {
+                            for (int j = 0; j < colNames.length; j++) {
+                                if ((ht.get(colNames[j]) instanceof String)) {
+                                    psMig.setString((j + 1), (String) ht.get(colNames[j]));
+                                } else if ((ht.get(colNames[j]) instanceof Integer)) {
+                                    psMig.setInt((j + 1), ((Integer) ht.get(colNames[j])).intValue());
+                                } else if ((ht.get(colNames[j]) instanceof Double)) {
+                                    psMig.setDouble((j + 1), ((Double) ht.get(colNames[j])).doubleValue());
+                                } else {
+                                    throw new RuntimeException("Unsupported Column Type");
+                                }
+                            }//end for_colNames
+                            str = JGeometry.store(conn, (JGeometry) ht.get("geometry"));
+                            psMig.setObject((colNames.length + 1), str);
+                            psMig.executeUpdate();
+                        } else {
+                            for (int j = 0; j < colNames.length; j++) {
+                                if ((ht.get(colNames[j]) instanceof String)) {
+                                    ps.setString((j + 1), (String) ht.get(colNames[j]));
+                                } else if ((ht.get(colNames[j]) instanceof Integer)) {
+                                    ps.setInt((j + 1), ((Integer) ht.get(colNames[j])).intValue());
+                                } else if ((ht.get(colNames[j]) instanceof Double)) {
+                                    ps.setDouble((j + 1), ((Double) ht.get(colNames[j])).doubleValue());
+                                } else {
+                                    throw new RuntimeException("Unsupported Column Type");
+                                }
+                            }//end for_colNames
+                            str = JGeometry.store(conn, (JGeometry) ht.get("geometry"));
+                            ps.setObject((colNames.length + 1), str);
+                            ps.executeUpdate();
+                        }
+                    } catch (SQLException e) {
+                        error_cnt = error_cnt + 1;
+                        System.out.println(e + "\nRecord #" + (i + 1) + " not converted 1.");
+                        logs.add("\r\nREGISTRO #" + (i + 1) + " NÃO CONVERTIDO");
+                    }
+                }//if_m_idName
+                else {
+                    int id = i + m_start_id;
+                    try {
+                        // Migrate geometry if polygon, polygonz, or polygonm
+                        if (shpFileType == 5 || shpFileType == 15 || shpFileType == 25) {
+                            psMig.setInt(1, id);
+                            for (int j = 0; j < colNames.length; j++) {
+                                if ((ht.get(colNames[j]) instanceof String)) {
+                                    psMig.setString((j + 2), (String) ht.get(colNames[j]));
+                                } else if ((ht.get(colNames[j]) instanceof Integer)) {
+                                    psMig.setInt((j + 2), ((Integer) ht.get(colNames[j])).intValue());
+                                } else if ((ht.get(colNames[j]) instanceof Double)) {
+                                    psMig.setDouble((j + 2), ((Double) ht.get(colNames[j])).doubleValue());
+                                } else {
+                                    throw new RuntimeException("Unsupported Column Type");
+                                }
+                            }//end for_colNames
+                            str = JGeometry.store(conn, (JGeometry) ht.get("geometry"));
+                            psMig.setObject((colNames.length + 2), str);
+                            psMig.executeUpdate();
+                        } else {
+                            ps.setInt(1, id);
+                            for (int j = 0; j < colNames.length; j++) {
+                                if ((ht.get(colNames[j]) instanceof String)) {
+                                    ps.setString((j + 2), (String) ht.get(colNames[j]));
+                                } else if ((ht.get(colNames[j]) instanceof Integer)) {
+                                    ps.setInt((j + 2), ((Integer) ht.get(colNames[j])).intValue());
+                                } else if ((ht.get(colNames[j]) instanceof Double)) {
+                                    ps.setDouble((j + 2), ((Double) ht.get(colNames[j])).doubleValue());
+                                } else {
+                                    throw new RuntimeException("Unsupported Column Type");
+                                }
+                            }//end for_colNames
+                            str = JGeometry.store(conn, (JGeometry) ht.get("geometry"));
+                            ps.setObject((colNames.length + 2), str);
+                            ps.executeUpdate();
+                        }
+                    } catch (SQLException e) {
+                        error_cnt = error_cnt + 1;
+                        System.out.println(e + "\nRecord #" + (i + 1) + " not converted 2.");
+                        e.printStackTrace();
+//                    logs.add("\r\nREGISTRO #" + (i + 1) + "NÃO CONVERTIDO");
+                        jTALog.append("\r\nREGISTRO #" + (i + 1) + " NÃO CONVERTIDO");
+                        jTALog.setCaretPosition(jTALog.getText().length());
+                    }
+                }
+
+                if (skip_create_table > 0) { //SE FOR ATUALIZAÇÃO DE TABELA, FAZ COMMIT A CADA 20000 REGISTROS
+                    //Edit to adjust, or comment to remove COMMIT interval; default 1000
+                    if (m_commit_interval == -1) {
+                        if ((i + 1) % 20000 == 0) {
+                            conn.commit();
+                        }
+                    } else {
+                        if ((i + 1) % m_commit_interval == 0) {
+                            conn.commit();
+                        }
+                    }
+                } else { //SE FOR CRIAÇÃO DE NOVA TABELA, FAZ COMMIT A CADA 1000 REGISTROS
+
+                    if (m_commit_interval == -1) {
+                        if ((i + 1) % 1000 == 0) {
+                            conn.commit();
+                        }
+                    } else {
+                        if ((i + 1) % m_commit_interval == 0) {
+                            conn.commit();
+                        }
+                    }
+                }
+
+                /////////////////////////////////////////////////////////////////////////////
+            }//end_for_each_record   
+            //}
+
+            if (skip_create_table == 0) {
+                try {
+                    String updateIndex;
+                    Statement stmt = conn.createStatement();
+                    updateIndex = "CREATE INDEX " + m_tableName + "_MB_IDX ON " + m_tableName + " (GEOMETRY) INDEXTYPE IS MDSYS.SPATIAL_INDEX";
+                    stmt.executeUpdate(updateIndex);
                     stmt.close();
                 } catch (SQLException exF) {
                     System.out.println(exF);
-                    System.out.println("caiu na exceção");
                 }
             }
 
-        }
-
-        ////////////////////////////////////////////////////////////////////////////
-        // Conversion from Feature to DB
-        ////////////////////////////////////////////////////////////////////////////
-        error_cnt = 0;
-        int numFields = dbfr.numFields();
-        numRecords = dbfr.numRecords();
-//        logs.add("\r\n\n-> QUANTIDADE DE REGISTROS À CONVERTER DO ARQUIVO SHAPE: " + String.valueOf(numRecords));
-        jTALog.append("\r\n\n-> QUANTIDADE DE REGISTROS À CONVERTER DO ARQUIVO SHAPE: " + String.valueOf(numRecords));
-        jTALog.setCaretPosition(jTALog.getText().length());
-        byte[] fieldTypes = new byte[numFields];
-        for (int field = 0; field < numFields; field++) {
-            fieldTypes[field] = dbfr.getFieldType(field);
-            System.out.println("Campos: " + dbfr.getFieldName(field));
-//            logs.add("\r\n [COLUNA" + (field + 1) + ": " + dbfr.getFieldName(field) + "]");
-            jTALog.append("\r\n [COLUNA" + (field + 1) + ": " + dbfr.getFieldName(field) + "]");
-            jTALog.setCaretPosition(jTALog.getText().length());
-        } //usar isso para mostrar as colunas do shape para o usuário
-        Hashtable ht = null;
-        // Get first feature record to determine num of columns
-        ht = sf.fromRecordToFeature(dbfr, sfh, fieldTypes, numFields, 0, m_srid);
-        // Num of columns
-        int val = ht.size();
-        String params = null;
-        String paramsM = null;
-        if (m_idName == null) {
-            params = "(";
-        } else {
-            params = "(?,";
-        }
-        for (int i = 0; i < val; i++) {
-            if (i == 0) {
-                params = params + " ?";
-            } else {
-                params = params + ", ?";
-            }
-        }
-        params = params + ")";
-        paramsM = params.substring(0, (params.length() - 2)) + "MDSYS.SDO_MIGRATE.TO_CURRENT(?, " + dimArrayMig + "))";
-
-        String[] colNames = sf.getOraFieldNames(dbfr, fieldTypes, numFields);
-        // Create prepared statements
-        String insertRec = "INSERT INTO " + m_tableName + " VALUES" + params;
-        PreparedStatement ps = conn.prepareStatement(insertRec);
-        PreparedStatement psCom = conn.prepareStatement("COMMIT");
-        String insertMig = "INSERT INTO " + m_tableName + " VALUES" + paramsM;
-        PreparedStatement psMig = conn.prepareStatement(insertMig);
-        //ResultSet resMig = null;
-        STRUCT str = null;
-
-        StatusConversaoView popUpStatusConversao = new StatusConversaoView();
-        popUpStatusConversao.setLocationRelativeTo(null);
-        popUpStatusConversao.setVisible(true);
-
-        for (int i = 0; i < numRecords; i++) {
-
-            //Edit to adjust, or comment to remove screen output; default 10
-            if ((i + 1) % 1 == 0) {
-                //System.out.println("Converting record #" + (i + 1));
-                popUpStatusConversao.setStatus(i + 1, numRecords, nomeDB);
-            }
-
-            if (i == (numRecords - 1)) {
-                popUpStatusConversao.setStatusFinal("Indexando Registros.");
-            }
-            //////////////////////////////////////////////////////////////////////////////
-
-            ht = sf.fromRecordToFeature(dbfr, sfh, fieldTypes, numFields, i, m_srid);
-
-            if (m_idName == null) {
+            if (recompilaFazenda == 1) {
                 try {
-                    // Migrate geometry if polygon, polygonz, or polygonm
-                    if (shpFileType == 5 || shpFileType == 15 || shpFileType == 25) {
-                        for (int j = 0; j < colNames.length; j++) {
-                            if ((ht.get(colNames[j]) instanceof String)) {
-                                psMig.setString((j + 1), (String) ht.get(colNames[j]));
-                            } else if ((ht.get(colNames[j]) instanceof Integer)) {
-                                psMig.setInt((j + 1), ((Integer) ht.get(colNames[j])).intValue());
-                            } else if ((ht.get(colNames[j]) instanceof Double)) {
-                                psMig.setDouble((j + 1), ((Double) ht.get(colNames[j])).doubleValue());
-                            } else {
-                                throw new RuntimeException("Unsupported Column Type");
-                            }
-                        }//end for_colNames
-                        str = JGeometry.store(conn, (JGeometry) ht.get("geometry"));
-                        psMig.setObject((colNames.length + 1), str);
-                        psMig.executeUpdate();
-                    } else {
-                        for (int j = 0; j < colNames.length; j++) {
-                            if ((ht.get(colNames[j]) instanceof String)) {
-                                ps.setString((j + 1), (String) ht.get(colNames[j]));
-                            } else if ((ht.get(colNames[j]) instanceof Integer)) {
-                                ps.setInt((j + 1), ((Integer) ht.get(colNames[j])).intValue());
-                            } else if ((ht.get(colNames[j]) instanceof Double)) {
-                                ps.setDouble((j + 1), ((Double) ht.get(colNames[j])).doubleValue());
-                            } else {
-                                throw new RuntimeException("Unsupported Column Type");
-                            }
-                        }//end for_colNames
-                        str = JGeometry.store(conn, (JGeometry) ht.get("geometry"));
-                        ps.setObject((colNames.length + 1), str);
-                        ps.executeUpdate();
-                    }
-                } catch (SQLException e) {
-                    error_cnt = error_cnt + 1;
-                    System.out.println(e + "\nRecord #" + (i + 1) + " not converted 1.");
-                    logs.add("\r\nREGISTRO #" + (i + 1) + " NÃO CONVERTIDO");
-                }
-            }//if_m_idName
-            else {
-                int id = i + m_start_id;
-                try {
-                    // Migrate geometry if polygon, polygonz, or polygonm
-                    if (shpFileType == 5 || shpFileType == 15 || shpFileType == 25) {
-                        psMig.setInt(1, id);
-                        for (int j = 0; j < colNames.length; j++) {
-                            if ((ht.get(colNames[j]) instanceof String)) {
-                                psMig.setString((j + 2), (String) ht.get(colNames[j]));
-                            } else if ((ht.get(colNames[j]) instanceof Integer)) {
-                                psMig.setInt((j + 2), ((Integer) ht.get(colNames[j])).intValue());
-                            } else if ((ht.get(colNames[j]) instanceof Double)) {
-                                psMig.setDouble((j + 2), ((Double) ht.get(colNames[j])).doubleValue());
-                            } else {
-                                throw new RuntimeException("Unsupported Column Type");
-                            }
-                        }//end for_colNames
-                        str = JGeometry.store(conn, (JGeometry) ht.get("geometry"));
-                        psMig.setObject((colNames.length + 2), str);
-                        psMig.executeUpdate();
-                    } else {
-                        ps.setInt(1, id);
-                        for (int j = 0; j < colNames.length; j++) {
-                            if ((ht.get(colNames[j]) instanceof String)) {
-                                ps.setString((j + 2), (String) ht.get(colNames[j]));
-                            } else if ((ht.get(colNames[j]) instanceof Integer)) {
-                                ps.setInt((j + 2), ((Integer) ht.get(colNames[j])).intValue());
-                            } else if ((ht.get(colNames[j]) instanceof Double)) {
-                                ps.setDouble((j + 2), ((Double) ht.get(colNames[j])).doubleValue());
-                            } else {
-                                throw new RuntimeException("Unsupported Column Type");
-                            }
-                        }//end for_colNames
-                        str = JGeometry.store(conn, (JGeometry) ht.get("geometry"));
-                        ps.setObject((colNames.length + 2), str);
-                        ps.executeUpdate();
-                    }
-                } catch (SQLException e) {
-                    error_cnt = error_cnt + 1;
-                    System.out.println(e + "\nRecord #" + (i + 1) + " not converted 2.");
-                    e.printStackTrace();
-//                    logs.add("\r\nREGISTRO #" + (i + 1) + "NÃO CONVERTIDO");
-                    jTALog.append("\r\nREGISTRO #" + (i + 1) + " NÃO CONVERTIDO");
+                    String updateFunction;
+                    String selectFunction;
+                    Statement stmt = conn.createStatement();
+
+                    updateFunction = "ALTER FUNCTION fnc_localiza_faz COMPILE";
+                    stmt.executeUpdate(updateFunction);
+                    selectFunction = "SELECT fnc_localiza_faz(0.0,0.0) as FAZ FROM DUAL";
+                    stmt.executeUpdate(selectFunction);
+                    stmt.close();
+
+//                logs.add("\r\n\n-> FUNÇÃO 'FNC_LOCALIZA_FAZ' FOI RECOMPILADA COM SUCESSO!");
+                    jTALog.append("\r\n\n-> FUNÇÃO 'FNC_LOCALIZA_FAZ' FOI RECOMPILADA COM SUCESSO!");
+                    jTALog.setCaretPosition(jTALog.getText().length());
+                } catch (SQLException exF) {
+                    System.out.println(exF);
+                    //logs.add("\r\n\n-> FUNÇÃO 'FNC_LOCALIZA_FAZ' NÃO RECOMPILADA!\n [" + exF.getMessage().trim() + "]");
+                    jTALog.append("\r\n\n-> FUNÇÃO 'FNC_LOCALIZA_FAZ' NÃO RECOMPILADA!\n [" + exF.getMessage().trim() + "]");
                     jTALog.setCaretPosition(jTALog.getText().length());
                 }
             }
 
-            //Edit to adjust, or comment to remove COMMIT interval; default 1000
-            if (m_commit_interval == -1) {
-                if ((i + 1) % 2000 == 0) {
+            if (skip_create_table == 2) {
+                try {
+                    PreparedStatement deleteRegistrosAnt = conn.prepareStatement("DELETE FROM " + m_tableName + " WHERE " + m_idName + " < " + m_start_id);
+                    deleteRegistrosAnt.executeUpdate();
                     conn.commit();
+                    deleteRegistrosAnt.close();
+                } catch (SQLException exF) {
+                    System.out.println(exF);
                 }
-            } else {
-                if ((i + 1) % m_commit_interval == 0) {
+                try {
+                    PreparedStatement updateIDs = conn.prepareStatement("UPDATE " + m_tableName + " SET " + m_idName + " = ROWNUM");
+                    updateIDs.executeUpdate();
                     conn.commit();
-                }
-            }
-            /////////////////////////////////////////////////////////////////////////////
-
-        }//end_for_each_record   
-
-        if (skip_create_table == 0) {
-            try {
-                String updateIndex;
-                Statement stmt = conn.createStatement();
-                updateIndex = "CREATE INDEX " + m_tableName + "_MB_IDX ON " + m_tableName + " (GEOMETRY) INDEXTYPE IS MDSYS.SPATIAL_INDEX";
-                stmt.executeUpdate(updateIndex);
-                stmt.close();
-            } catch (SQLException exF) {
-                System.out.println(exF);
-            }
-        }
-
-        if (recompilaFazenda == 1) {
-            try {
-                String updateFunction;
-                String selectFunction;
-                Statement stmt = conn.createStatement();
-
-                updateFunction = "ALTER FUNCTION fnc_localiza_faz COMPILE";
-                stmt.executeUpdate(updateFunction);
-                selectFunction = "SELECT fnc_localiza_faz(0.0,0.0) as FAZ FROM DUAL";
-                stmt.executeUpdate(selectFunction);
-                stmt.close();
-
-//                logs.add("\r\n\n-> FUNÇÃO 'FNC_LOCALIZA_FAZ' FOI RECOMPILADA COM SUCESSO!");
-                jTALog.append("\r\n\n-> FUNÇÃO 'FNC_LOCALIZA_FAZ' FOI RECOMPILADA COM SUCESSO!");
-                jTALog.setCaretPosition(jTALog.getText().length());
-            } catch (SQLException exF) {
-                System.out.println(exF);
-                //logs.add("\r\n\n-> FUNÇÃO 'FNC_LOCALIZA_FAZ' NÃO RECOMPILADA!\n [" + exF.getMessage().trim() + "]");
-                jTALog.append("\r\n\n-> FUNÇÃO 'FNC_LOCALIZA_FAZ' NÃO RECOMPILADA!\n [" + exF.getMessage().trim() + "]");
-                jTALog.setCaretPosition(jTALog.getText().length());
-            }
-        }
-
-        if (skip_create_table == 2) {
-            try {
-                PreparedStatement deleteRegostrosAnt = conn.prepareStatement("DELETE FROM " + m_tableName + " WHERE " + m_idName + " < " + m_start_id);
-                deleteRegostrosAnt.executeUpdate();
-                conn.commit();
-                deleteRegostrosAnt.close();
-            } catch (SQLException exF) {
-                System.out.println(exF);
-            }
-            try {
-                PreparedStatement updateIDs = conn.prepareStatement("UPDATE " + m_tableName + " SET " + m_idName + " = ROWNUM");
-                updateIDs.executeUpdate();
-                conn.commit();
-                updateIDs.close();
+                    updateIDs.close();
 //                    System.out.println("Maior ID: " + m_start_id);
-            } catch (SQLException exF) {
-                System.out.println(exF);
+                } catch (SQLException exF) {
+                    System.out.println(exF);
+                }
+
             }
 
-        }
+            conn.commit();
+            dbfr.closeDBF();
+            sfh.closeShapefile();
+            ps.close();
+            psMig.close();
+            psCom.close();
+            popUpStatusConversao.dispose();
 
-        conn.commit();
-        dbfr.closeDBF();
-        sfh.closeShapefile();
-        ps.close();
-        psMig.close();
-        psCom.close();
-        popUpStatusConversao.dispose();
+        } //Fim IF (verifica se m_start_id > 0
 
         if (error_cnt > 0) {
             System.out.println(error_cnt + " record(s) not converted.");
 //            logs.add("\r\n\nTOTAL DE REGISTROS NÃO IMPORTADOS: " + error_cnt);
-            jTALog.append("\r\n\nREGISTROS NÃO CONVERTIDOS: " + error_cnt);
+            jTALog.append("\r\n\nREGISTROS NÃO IMPORTADOS: " + error_cnt);
             jTALog.setCaretPosition(jTALog.getText().length());
         }
 
         System.out.println((numRecords - error_cnt) + " record(s) converted.");
 //        logs.add("\r\n\nTOTAL DE REGISTROS IMPORTADOS: " + numRecords + " LINHAS");
-        jTALog.append("\r\n\nTOTAL DE REGISTROS IMPORTADOS: " + (numRecords - error_cnt) + " LINHAS");
+        jTALog.append("\r\n\n-> QUANTIDADE DE DADOS CONVERTIDOS: " + (numRecords - error_cnt));
         jTALog.setCaretPosition(jTALog.getText().length());
-        System.out.println("Done.\n");
+        jTALog.append("\r\n\n-> TOTAL DE REGISTROS NA TABELA '" + m_tableName + "' APÓS A IMPORTAÇÃO: " + verificaQtdeRegistrosTabelaAtual());
+        jTALog.setCaretPosition(jTALog.getText().length());
 
         //} //fim do IF que criei validando conexão
         return logs;
